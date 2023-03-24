@@ -13,7 +13,7 @@ The filter type can be selected using a radio button. An example image for the f
 shown below the inputs.
 
 Requirements
-__------------
+------------
 
 * cmake
 * gcc
