@@ -11,7 +11,7 @@ Window {
     visible: true
     title: "Filter-Calculator"
     width: 600
-    height: 250
+    height: 300
     maximumWidth: width 
     maximumHeight: height 
     minimumWidth: width 
@@ -38,9 +38,10 @@ Window {
             radius: 5
                 
             TextInput {
+                id: resistance 
                 anchors.fill: parent
                 horizontalAlignment: TextInput.AlignHCenter 
-                text: filterCalculator.res
+                text: (filterCalculator.res).toFixed(2)
                 validator: DoubleValidator {bottom: 0; top: 9999; locale: "en_GB"}
                 onEditingFinished: {
                     filterCalculator.setRes(parseFloat(text));
@@ -60,9 +61,10 @@ Window {
             radius: 5
                 
             TextInput {
+                id: capacitance 
                 anchors.fill: parent
                 horizontalAlignment: TextInput.AlignHCenter 
-                text: filterCalculator.cap 
+                text: (filterCalculator.cap).toFixed(2) 
                 validator: DoubleValidator {bottom: 0.; top: 9999.; locale: "en_GB";}
                 onEditingFinished: {
                     filterCalculator.setCap(parseFloat(text));
@@ -82,6 +84,7 @@ Window {
             radius: 5
                 
             TextInput {
+                id: cutoff 
                 anchors.fill: parent
                 horizontalAlignment: TextInput.AlignHCenter 
                 text: (filterCalculator.cutOff).toFixed(2) 
@@ -95,19 +98,44 @@ Window {
         Button {
             id: calcButton
             text: "Calculate Parameters"
-            onClicked: filterCalculator.calculateCutOff()
+            onClicked: filterCalculator.calculate()
             anchors.verticalCenter: input.verticalCenter
         }
     } // filterParameterRow
 
-    ButtonGroup {
-        buttons: filterTypeRow.children
-        onClicked: filterCalculator.setFilterType(button.text)
-    }
+
+    ComboBox {
+        id: calculateValueSelector
+        anchors.top: filterParameterRow.bottom
+        anchors.left: parent.left 
+        anchors.topMargin: 10 
+        anchors.leftMargin: 10
+        
+        model: ["Cut-Off", "Capacitance", "Resistance"]
+        onActivated: function(selected) {
+            cutoff.enabled = true;
+            resistance.enabled = true;
+            capacitance.enabled = true;
+            if (selected == 0) {
+                cutoff.enabled = false;
+            } else if (selected == 1) {
+                capacitance.enabled = false;
+            } else {
+                resistance.enabled = false;
+            }
+            filterCalculator.setCalculationMode(selected);
+        }
+    } 
+
 
     Row {
+        ButtonGroup {
+            buttons: filterTypeRow.children
+            onClicked: filterCalculator.setFilterType(button.text)
+        }
+        
         id: filterTypeRow
-        anchors.top: filterParameterRow.bottom 
+        anchors.top: calculateValueSelector.bottom 
         anchors.left: parent.left 
         anchors.topMargin: 10 
         anchors.leftMargin: 10

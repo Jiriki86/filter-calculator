@@ -12,6 +12,10 @@ class FilterCalculator : public QObject {
 public:
   enum FilterType { LowPass, HighPass };
   Q_ENUM(FilterType)
+
+  enum CalculationMode { Cutoff, Capacitance, Resistance };
+  Q_ENUM(CalculationMode)
+
   Q_PROPERTY(FilterType filterType READ filterType WRITE setFilterType NOTIFY
                  filterTypeChanged);
 
@@ -26,11 +30,13 @@ public slots:
   void setCap(double c);
   void setCutOff(double f);
 
-  void calculateCutOff();
+  void calculate();
 
   void setFilterType(QString filterType);
   FilterType filterType() const;
   void setFilterType(FilterType f);
+
+  void setCalculationMode(CalculationMode mode);
 
 signals:
   void resChanged(double val);
@@ -44,4 +50,5 @@ private:
   double m_cutOff = 0;
 
   FilterType m_filterType = FilterType::LowPass;
+  CalculationMode m_calculationMode = CalculationMode::Cutoff;
 };
